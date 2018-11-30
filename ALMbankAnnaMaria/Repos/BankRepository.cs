@@ -23,6 +23,15 @@ namespace ALMbankAnnaMaria.Repos
             return GetCustomers().SelectMany(c => c.Accounts);
         }
 
+        public decimal Deposit()
+        {
+            throw new NotImplementedException();
+        }
+
+        public decimal Withdrawal()
+        {
+            throw new NotImplementedException();
+        }
 
         private List<Customer> GetCustomers()
         {

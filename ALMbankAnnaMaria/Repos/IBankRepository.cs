@@ -11,5 +11,8 @@ namespace ALMbankAnnaMaria.Repos
         IEnumerable<Account> GetAllAccounts();
         IEnumerable<Customer> GetAllCustomers();
         Customer GetCustomer(int id);
+
+        decimal Deposit();
+        decimal Withdrawal();
     }
 }

@@ -19,7 +19,30 @@ namespace ALMbankAnnaMaria.Services
         {
             return _bankRepository.GetAllCustomers();
         }
-        private Account GetAccount(int bankKontoNummer)
+        public bool Deposit(int bankKontoNummer, decimal belopp)
+        {
+            var account = GetAccount(bankKontoNummer);
+            if (belopp == 0) return false;
+            if (account != null)
+            {
+                account.Balance += belopp;               
+                return true;
+            }
+            return false;            
+        }
+
+        public bool Withdrawal(int bankKontoNummer, decimal belopp)
+        {
+            var account = GetAccount(bankKontoNummer);
+            if (account == null) return false;
+            if (belopp == 0) return false;
+            if (belopp > account.Balance) return false;
+            
+            account.Balance -= belopp;
+            return true;
+        }
+
+        public Account GetAccount(int bankKontoNummer)
         {
             return GetAllCustomers().SelectMany(r => r.Accounts).FirstOrDefault(a => a.Id == bankKontoNummer);
         }

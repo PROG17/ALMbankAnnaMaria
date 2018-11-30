@@ -1,0 +1,44 @@
+﻿@model ALMbankAnnaMaria.ViewModels.BankAppViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Transaction</h2>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div>
+        @Model.Message
+    </div>
+}
+
+@if (Model.AccountNumber == 0 || Model.Ammount == 0)
+{
+    <form asp-controller="Bank" asp-action="Transaction" method="post">
+
+        <label asp-for="AccountNumber" ></label>
+        <input asp-for="AccountNumber" class="form-control"/>
+        <span asp-validation-for="AccountNumber" class="text-danger"></span>
+
+        <br />
+        <br />
+
+        <label asp-for="Ammount" ></label>
+        <input asp-for="Ammount" class="form-control" />
+        <span asp-validation-for="Ammount" class="text-danger"></span>
+
+        <input type="submit" value="Deposit" asp-action="Deposit" />
+        <input type="submit" value="Withdrawal" asp-action="Withdrawal" />
+        
+    </form>
+}
+else
+{
+    @if (Model.Balance != 0)
+    {
+        <br />
+        <label>Kontonummer: @Model.AccountNumber</label>
+        <br />
+        <label>Saldo: @Model.Balance</label>
+    }
+}
