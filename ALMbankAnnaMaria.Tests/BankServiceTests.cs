@@ -45,5 +45,48 @@ namespace ALMbankAnnaMaria.Tests
 
             Assert.AreEqual(balanceBefore, accountToTest.Balance);
         }
+
+        [TestMethod]
+        public void Transfer_Between_Accounts_Are_Successful()
+        {
+            // Arrange
+            _bankService = new BankService(new BankRepository());
+            var fromCustomer = _bankService.GetAllCustomers().First();
+            var toCustomer = _bankService.GetAllCustomers().Last();
+            var fromAccount = fromCustomer.Accounts.First();
+            var toAccount = toCustomer.Accounts.First();
+            decimal sum = 500;
+            var expectedBalanceOnFromAccount = fromAccount.Balance - sum;
+            var expectedBalanceOnToAccont = toAccount.Balance + sum;
+
+            // Act
+            var isSuccess = _bankService.Transfer(fromAccount.Id, toAccount.Id, sum, out string message);
+
+            // Assert
+            Assert.AreEqual(expectedBalanceOnFromAccount, fromAccount.Balance);
+            Assert.AreEqual(expectedBalanceOnToAccont, toAccount.Balance);
+        }
+
+        [TestMethod]
+        public void Transfer_Cannot_Be_Made_When_Insufficient_Funds()
+        {
+            // Arrange
+            _bankService = new BankService(new BankRepository());
+            var fromCustomer = _bankService.GetAllCustomers().First();
+            var toCustomer = _bankService.GetAllCustomers().Last();
+            var fromAccount = fromCustomer.Accounts.First();
+            var toAccount = toCustomer.Accounts.First();
+            decimal sum = fromAccount.Balance + 1;
+            var expectedBalanceOnFromAccount = fromAccount.Balance;
+            var expectedBalanceOnToAccont = toAccount.Balance;
+
+            // Act
+            var isSuccess = _bankService.Transfer(fromAccount.Id, toAccount.Id, sum, out string message);
+
+            // Assert
+            Assert.IsFalse(isSuccess);
+            Assert.AreEqual(expectedBalanceOnFromAccount, fromAccount.Balance);
+            Assert.AreEqual(expectedBalanceOnToAccont, toAccount.Balance);
+        }
     }
 }

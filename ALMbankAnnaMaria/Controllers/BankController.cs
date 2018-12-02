@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -77,6 +77,36 @@ namespace ALMbankAnnaMaria.Controllers
                 }                    
             }
             return View("Index", model);
+        }
+
+        [HttpGet]
+        public IActionResult Transfer()
+        {
+            return View(new TransferViewModel());
+        }
+
+        [HttpPost]
+        public IActionResult Transfer(TransferViewModel vm)
+        {
+            if (ModelState.IsValid)
+            {
+                var isSuccess = bankService.Transfer(vm.FromAccountId, vm.ToAccountId, vm.Sum, out string message);
+
+                if (isSuccess)
+                {
+                    vm.Message = message;
+                    vm.ToAccountBalance = bankService.GetAccount(vm.ToAccountId).Balance;
+                    vm.FromAccountBalance = bankService.GetAccount(vm.FromAccountId).Balance;
+                    return View(vm);
+                }
+                else
+                {
+                    vm.Message = message;
+                    vm.ToAccountBalance = 0;
+                    vm.FromAccountBalance = 0;
+                }
+            }
+            return View(vm);
         }
     }
 }
