@@ -1,4 +1,4 @@
-﻿using ALMbankAnnaMaria.Models;
+using ALMbankAnnaMaria.Models;
 using ALMbankAnnaMaria.Repos;
 using System;
 using System.Collections.Generic;
@@ -39,6 +39,46 @@ namespace ALMbankAnnaMaria.Services
             if (belopp > account.Balance) return false;
             
             account.Balance -= belopp;
+            return true;
+        }
+
+        public bool Transfer(int fromAccountId, int toAccountId, decimal sum, out string message)
+        {
+            if(sum <= 0)
+            {
+                message = "Summan måste vara högre än 0.";
+                return false;
+            }
+
+            var fromAccount = GetAccount(fromAccountId);
+            if(fromAccount == null)
+            {
+                message = "Från-kontonumret finns inte, kontrollera att siffrorna stämmer.";
+                return false;
+            }
+
+            var toAccount = GetAccount(toAccountId);
+            if (toAccount == null)
+            {
+                message = "Till-kontonumret finns inte, kontrollera att siffrorna stämmer.";
+                return false;
+            }
+
+            var isWithdrawn = Withdrawal(fromAccount.Id, sum);
+            if (!isWithdrawn)
+            {
+                message = $"Det fanns inte tillräckligt med pengar på konto med kontonummer {fromAccountId}";
+                return false;
+            }
+
+            var isDeposit = Deposit(toAccountId, sum);
+
+            if (!isDeposit)
+            {
+                message = "Någonting gick fel när pengar skulle överföras. Prova igen senare.";
+            }
+
+            message = $"{sum.ToString("C")} har överförts från konto {fromAccountId} till konto {toAccountId}";
             return true;
         }
 
